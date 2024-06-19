@@ -1,0 +1,3 @@
+先跑to_matrix.py，由data中的xlsx生成images文件夹中的图片
+再跑train.py，由images中的图片训练出模型，保存为当前目录下的model.pth
+test.py可以查看混淆矩阵和准确率，之后尝试连接串口读写数据进行预测
