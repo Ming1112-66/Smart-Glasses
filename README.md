@@ -13,4 +13,6 @@ augmented reality,individual healthcare, etc.
 
 ![Demo](demo.png)
 
-https://raw.githubusercontent.com/Ming1112-66/Smart-Glasses/main/demo.mp4
+
+https://github.com/Ming1112-66/Smart-Glasses/assets/73151062/81fb3cbc-1c47-4ebd-9d2a-fb1019e97330
+
