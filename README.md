@@ -11,6 +11,6 @@ augmented reality,individual healthcare, etc.
 
 ## Solutions
 
-[Demo](demo.png)
+![Demo](demo.png)
 
-[Video](demo.mp4)
+<iframe height=1280 width=720 src="./demo.mp4">
