@@ -13,4 +13,4 @@ augmented reality,individual healthcare, etc.
 
 ![Demo](demo.png)
 
-<iframe height=1280 width=720 src="./demo.mp4">
+https://raw.githubusercontent.com/Ming1112-66/Smart-Glasses/main/demo.mp4
