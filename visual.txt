@@ -1,0 +1,96 @@
+#include <Arduino.h>
+
+// 预定义的设置
+const int S0_1 = 10;
+const int S1_1 = 9;
+const int S2_1 = 7;
+const int S3_1 = 8;
+const int ADC_PIN_1 = A0;
+
+const int S0_2 = 5;
+const int S1_2 = 4;
+const int S2_2 = 3;
+const int S3_2 = 2;
+const int ADC_PIN_2 = A1;
+
+const long BAUD_RATE = 115200;
+const int SAMPLE_INTERVAL = 1000 / 250; // 250 samples per second
+
+const int NUM_READINGS = 5;  // 每个通道的读数数量
+const int TOTAL_CHANNELS = 30;  // 总通道数
+
+// 用于存储读数的二维数组
+int readings[TOTAL_CHANNELS][NUM_READINGS];
+int readIndex = 0;  // 当前读数的索引
+
+// 用于存储每个通道的平均读数
+int averageReadings[TOTAL_CHANNELS];
+
+void setup() {
+  // 初始化通信
+  Serial.begin(BAUD_RATE);
+
+  // 配置多路复用器控制引脚为输出
+  pinMode(S0_1, OUTPUT);
+  pinMode(S1_1, OUTPUT);
+  pinMode(S2_1, OUTPUT);
+  pinMode(S3_1, OUTPUT);
+  
+  pinMode(S0_2, OUTPUT);
+  pinMode(S1_2, OUTPUT);
+  pinMode(S2_2, OUTPUT);
+  pinMode(S3_2, OUTPUT);
+
+  // 初始化读数数组
+  for (int channel = 0; channel < TOTAL_CHANNELS; channel++) {
+    for (int i = 0; i < NUM_READINGS; i++) {
+      readings[channel][i] = 0;
+    }
+  }
+}
+
+void loop() {
+  for (int i = 0; i < 15; i++) {
+    // 处理来自第一组的传感器数据
+    selectChannel(i, S0_1, S1_1, S2_1, S3_1);
+    delay(SAMPLE_INTERVAL / 2);
+    int newAdcValue1 = analogRead(ADC_PIN_1);
+    processReading(2 * i, newAdcValue1);
+
+    // 处理来自第二组的传感器数据
+    selectChannel(i, S0_2, S1_2, S2_2, S3_2);
+    delay(SAMPLE_INTERVAL / 2);
+    int newAdcValue2 = analogRead(ADC_PIN_2);
+    processReading(2 * i + 1, newAdcValue2);
+  }
+
+  // 所有读数更新完成后，发送新的平均值
+  Serial.print("A");
+  for (int i = 0; i < TOTAL_CHANNELS; i++) {
+    Serial.print(",");
+    Serial.print(averageReadings[i]);
+  }
+  Serial.println();
+
+  // 更新读数索引
+  readIndex++;
+  if (readIndex >= NUM_READINGS) {
+    readIndex = 0;
+  }
+}
+
+void selectChannel(int channel, int S0, int S1, int S2, int S3) {
+  digitalWrite(S0, bitRead(channel, 0));
+  digitalWrite(S1, bitRead(channel, 1));
+  digitalWrite(S2, bitRead(channel, 2));
+  digitalWrite(S3, bitRead(channel, 3));
+}
+
+void processReading(int channel, int value) {
+  readings[channel][readIndex] = value; // 保存新读数
+  long sum = 0;
+  for (int i = 0; i < NUM_READINGS; i++) {
+    sum += readings[channel][i];
+  }
+  averageReadings[channel] = sum / NUM_READINGS; // 计算平均值
+}
